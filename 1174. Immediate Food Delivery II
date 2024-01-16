@@ -1,0 +1,14 @@
+# Write your MySQL query statement below
+select 
+ROUND(
+        (
+        SUM(CASE WHEN x.order_date = x.customer_pref_delivery_date THEN 1 ELSE 0 END)/
+        COUNT(x.order_date)
+        )*100 
+,2) as immediate_percentage
+from (
+select *,
+rank() over(partition by customer_id order by order_date) as rn
+from delivery
+) x
+where rn < 2;
